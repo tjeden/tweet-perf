@@ -11,6 +11,9 @@ db.exists(function (err, exists) {
       views: {
         byUsername: {
           map: 'function (doc) { emit(doc.screen_name, doc); }'
+        },
+        byId: {
+          map: 'function(doc) { emit(doc.id, doc); }'
         }
       }
     });
@@ -36,6 +39,13 @@ Database.prototype.insertTweet = function (username, status, callback) {
 }
 
 Database.prototype.selectTimeline = function (username, callback) {
-  // TODO
-  callback(['dupa']);
+  db.view('user/byUsername', { key: username }, function (err, doc) {
+    var followers = doc[0].value.followers;
+    console.log(followers);
+    db.view('user/byId', { key: followers}, function (err, doc) {
+      console.log(err);
+      console.log(doc);
+      callback(doc);
+    });
+  });
 }
