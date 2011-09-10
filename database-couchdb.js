@@ -7,6 +7,13 @@ db.exists(function (err, exists) {
 	  console.log('error', err);
 	} else if (exists) {
 	  console.log('the force is with you.');
+    db.save('_design/user', {
+      views: {
+        byUsername: {
+          map: 'function (doc) { if (doc.resource === `User`) { emit(doc.screen_name, doc) } }'
+        }
+      }
+    });
 	} else {
 	  console.log('database does not exists.');
 	  db.create();
@@ -19,7 +26,9 @@ exports.Database = Database;
 
 Database.prototype.selectTweets = function (username, callback) {
   // TODO
-  callback(['dupa']);
+  db.view('user/byUsername', { key: username }, function (err, doc) {
+    callback(doc);
+  }); 
 }
 
 Database.prototype.insertTweet = function (username, status, callback) {
