@@ -1,7 +1,7 @@
 /*
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
- 
+console.log('aa'); 
 var mysql = require('mysql');
 
 var USERS = 'users';

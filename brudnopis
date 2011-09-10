@@ -1,0 +1,7 @@
+user = { string: name, ....
+  statuses = [ {status_1: 'text'}, {status2}],
+  followings = [ user_3_id, user_4_id ]}
+
+user = { string: name, ....
+  statuses = [ {status_1: 'text', user: self}, {status2, user_3_id}],
+  followers = [ user_3_id, user_4_id ]}
