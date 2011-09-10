@@ -25,14 +25,14 @@ database.findUsers( function(users) {
   console.log('Start migrate statuses');
 
   for (var i=0; i < users.length; i++) {
-    database.selectTweets(users[i].screen_name, function(x,tweets){
-<<<<<<< HEAD
-      
-=======
->>>>>>> 3f949d08878a4d0443d57b00c9c8fe0be5c15498
+    database.selectTweets(users[i].screen_name, function(x,tweets){      
       data[x].statuses = tweets;
       db.save(data[x].id+'', data[x]);
       console.log(x);
+      // insert user into couchdb
+      // TODO insert users[x] + tweets
+      // x - id usera 
+      // tweets - tablica twittow
     }.bind(null,i));
   }
   
