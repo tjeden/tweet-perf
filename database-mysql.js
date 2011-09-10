@@ -24,7 +24,7 @@ var DATABASE3 = 'twitter4';
 
 var clients = [];
 clients.push(new MySQLPool({
-  poolSize: 4,
+  poolSize: 20,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -33,7 +33,7 @@ clients.push(new MySQLPool({
 }));
 
 clients.push(new MySQLPool({
-  poolSize: 4,
+  poolSize: 20,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -42,7 +42,7 @@ clients.push(new MySQLPool({
 }));
 
 clients.push(new MySQLPool({
-  poolSize: 4,
+  poolSize: 20,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -51,7 +51,7 @@ clients.push(new MySQLPool({
 }));
 
 clients.push(new MySQLPool({
-  poolSize: 4,
+  poolSize: 20,
 	user: 'root',
 	password: '',
 	host: 'localhost',
