@@ -2,6 +2,19 @@
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
 var mysql = require('mysql');
+var fs = require('fs');
+var path = require('path');
+
+var config = {};
+
+fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
+	if (err) {
+   		console.log("could not load config.json\n" + err.toString());
+  	} else {
+		config = JSON.parse(data);
+	}
+});
+
 
 var USERS = 'users';
 var STATUSES = 'statuses';
@@ -24,34 +37,34 @@ var DATABASE3 = 'twitter4';
 var clients = [];
 
 clients.push(mysql.createClient({
-	user: 'root',
-	password: '',
-	host: 'localhost',
-	port: 3306,
+	user: config.user,
+	password: config.password,
+	host: config.host,
+	port: config.port,
 	database: DATABASE0,
 }));
 
 clients.push(mysql.createClient({
-	user: 'root',
-	password: '',
-	host: 'localhost',
-	port: 3306,
+	user: config.user,
+	password: config.password,
+	host: config.host,
+	port: config.port,
 	database: DATABASE1,
 }));
 
 clients.push(mysql.createClient({
-	user: 'root',
-	password: '',
-	host: 'localhost',
-	port: 3306,
+	user: config.user,
+	password: config.password,
+	host: config.host,
+	port: config.port,
 	database: DATABASE2,
 }));
 
 clients.push(mysql.createClient({
-	user: 'root',
-	password: '',
-	host: 'localhost',
-	port: 3306,
+	user: config.user,
+	password: config.password,
+	host: config.host,
+	port: config.port,
 	database: DATABASE3,
 }));
 
