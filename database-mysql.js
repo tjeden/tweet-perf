@@ -1,7 +1,8 @@
 /*
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
-var mysql = require('mysql');
+//var mysql = require('mysql');
+var MySQLPool = require("mysql-pool").MySQLPool;
 
 var USERS = 'users';
 var STATUSES = 'statuses';
@@ -22,8 +23,8 @@ var DATABASE2 = 'twitter3';
 var DATABASE3 = 'twitter4';
 
 var clients = [];
-
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 4,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -31,7 +32,8 @@ clients.push(mysql.createClient({
 	database: DATABASE0,
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 4,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -39,7 +41,8 @@ clients.push(mysql.createClient({
 	database: DATABASE1,
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 4,
 	user: 'root',
 	password: '',
 	host: 'localhost',
@@ -47,7 +50,8 @@ clients.push(mysql.createClient({
 	database: DATABASE2,
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 4,
 	user: 'root',
 	password: '',
 	host: 'localhost',
