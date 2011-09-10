@@ -42,10 +42,22 @@ Database.prototype.selectTimeline = function (username, callback) {
   db.view('user/byUsername', { key: username }, function (err, doc) {
     var followers = doc[0].value.followers;
     console.log(followers);
-    db.view('user/byId', { key: followers}, function (err, doc) {
-      console.log(err);
-      console.log(doc);
-      callback(doc);
-    });
+    var all_tweets = [];  
+    var counter = 0;
+    var joinTweets= function(tweets) {
+      
+      all_tweets = all_tweets.concat(tweets);
+
+      counter++;
+      if (counter == followers.length) {
+        callback (all_tweets);
+      }
+    }
+    for (var j = 0; j < followers.length; j++) {
+      db.view('user/byId', { key: followers[j]}, function (err, doc) {
+        tweets = doc[0].value.statuses;
+        joinTweets(tweets);
+      });
+    };
   });
 }
