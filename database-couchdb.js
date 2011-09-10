@@ -7,35 +7,36 @@ db.exists(function (err, exists) {
 	  console.log('error', err);
 	} else if (exists) {
 	  console.log('the force is with you.');
+    db.save('_design/user', {
+      views: {
+        byUsername: {
+          map: 'function (doc) { if (doc.resource === `User`) { emit(doc.screen_name, doc) } }'
+        }
+      }
+    });
 	} else {
 	  console.log('database does not exists.');
 	  db.create();
 	}
 });
 
-var users = [
-	{
-		user_id: {},
-		screen_name: {},
-		statuses: {},
-		followers: {},
-		created_at: {},
-		updated_at: {}
-	},
-	{
-		user_id: {},
-		screen_name: {},
-		statuses: {},
-		followers: {},
-		created_at: {},
-		updated_at: {}
-	}
-];
+function Database() {
+};
+exports.Database = Database;
 
-db.save(users, function(err, res){
-	if(!err){
-		console.log('users saved');
-	} else {
-		console.log('error', err);
-	}
-});
+Database.prototype.selectTweets = function (username, callback) {
+  // TODO
+  db.view('user/byUsername', { key: username }, function (err, doc) {
+    callback(doc);
+  }); 
+}
+
+Database.prototype.insertTweet = function (username, status, callback) {
+  // TODO
+  callback(['dupa']);
+}
+
+Database.prototype.selectTimeline = function (username, callback) {
+  // TODO
+  callback(['dupa']);
+}
