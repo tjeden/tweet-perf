@@ -50,10 +50,22 @@ Engine.prototype.getTimeline = function (username, callback) {
 	database.selectTimeline(username, function(tweets) {
 	
 		if (tweets) {
-		
+	    var results = [];	
 			tweets.sort(dateSorter);
+      for (var i=0; i < tweets.slice(0,19).length; i++){
+        results[i] = { 
+          "created_at": tweets[i].created_at,
+          "text": tweets[i].text,
+          "id": tweets[i].id,
+          "user": {
+            "name": tweets[i].name,
+            "id": tweets[i].id,
+            "screen_name": tweets[i].screen_name
+          }
+        };
+      };
 			
-			callback(tweets.slice(0, 19));
+			callback(results);
 		
 		} else callback([]);
 	
