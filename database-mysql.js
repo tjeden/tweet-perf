@@ -12,63 +12,65 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
    		console.log("could not load config.json\n" + err.toString());
   	} else {
 		config = JSON.parse(data);
+		console.log(config);
 	}
+
+
+	var USERS = 'users';
+	var STATUSES = 'statuses';
+	var FOLLOWERS = 'followers';
+	var LIMIT = 20;
+	
+	 /*
+	 * Database schema:
+	 * users: id, name, screen_name
+	 * statuses: id, user_id, text, created_at
+	 * followers: user_id, follower_id
+	 */
+	
+	// tweets are partitioned into databases
+	var DATABASE0 = 'twitter1';
+	var DATABASE1 = 'twitter2';
+	var DATABASE2 = 'twitter3';
+	var DATABASE3 = 'twitter4';
+	
+	var clients = [];
+	clients.push(new MySQLPool({
+	  poolSize: 20,
+		user: config.user,
+		password: config.password,
+		host: config.host,
+		port: config.port,
+		database: DATABASE0
+	}));
+	
+	clients.push(new MySQLPool({
+	  poolSize: 20,
+		user: config.user,
+		password: config.password,
+		host: config.host,
+		port: config.port,
+		database: DATABASE1
+	}));
+	
+	clients.push(new MySQLPool({
+	  poolSize: 20,
+		user: config.user,
+		password: config.password,
+		host: config.host,
+		port: config.port,
+		database: DATABASE2
+	}));
+	
+	clients.push(new MySQLPool({
+	  poolSize: 20,
+		user: config.user,
+		password: config.password,
+		host: config.host,
+		port: config.port,
+		database: DATABASE3
+	}));
 });
-
-var USERS = 'users';
-var STATUSES = 'statuses';
-var FOLLOWERS = 'followers';
-var LIMIT = 20;
-
- /*
- * Database schema:
- * users: id, name, screen_name
- * statuses: id, user_id, text, created_at
- * followers: user_id, follower_id
- */
-
-// tweets are partitioned into databases
-var DATABASE0 = 'twitter1';
-var DATABASE1 = 'twitter2';
-var DATABASE2 = 'twitter3';
-var DATABASE3 = 'twitter4';
-
-var clients = [];
-clients.push(new MySQLPool({
-  poolSize: 20,
-	user: config.user,
-	password: config.password,
-	host: config.host,
-	port: config.port,
-	database: DATABASE0
-}));
-
-clients.push(new MySQLPool({
-  poolSize: 20,
-	user: config.user,
-	password: config.password,
-	host: config.host,
-	port: config.port,
-	database: DATABASE1
-}));
-
-clients.push(new MySQLPool({
-  poolSize: 20,
-	user: config.user,
-	password: config.password,
-	host: config.host,
-	port: config.port,
-	database: DATABASE2
-}));
-
-clients.push(new MySQLPool({
-  poolSize: 20,
-	user: config.user,
-	password: config.password,
-	host: config.host,
-	port: config.port,
-	database: DATABASE3
-}));
 
 //------------------------------------------------------------------------------
 
