@@ -1,7 +1,7 @@
 /*
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
-var mysql = require('mysql');
+var MySQLPool = require("mysql-pool").MySQLPool;
 var fs = require('fs');
 var path = require('path');
 
@@ -14,7 +14,6 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
 		config = JSON.parse(data);
 	}
 });
-
 
 var USERS = 'users';
 var STATUSES = 'statuses';
@@ -35,37 +34,40 @@ var DATABASE2 = 'twitter3';
 var DATABASE3 = 'twitter4';
 
 var clients = [];
-
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 20,
 	user: config.user,
 	password: config.password,
 	host: config.host,
 	port: config.port,
-	database: DATABASE0,
+	database: DATABASE0
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 20,
 	user: config.user,
 	password: config.password,
 	host: config.host,
 	port: config.port,
-	database: DATABASE1,
+	database: DATABASE1
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 20,
 	user: config.user,
 	password: config.password,
 	host: config.host,
 	port: config.port,
-	database: DATABASE2,
+	database: DATABASE2
 }));
 
-clients.push(mysql.createClient({
+clients.push(new MySQLPool({
+  poolSize: 20,
 	user: config.user,
 	password: config.password,
 	host: config.host,
 	port: config.port,
-	database: DATABASE3,
+	database: DATABASE3
 }));
 
 //------------------------------------------------------------------------------
