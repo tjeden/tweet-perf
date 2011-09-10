@@ -11,10 +11,9 @@ database.findUsers( function(users) {
   console.log('Start migrate statuses');
 
   for (var i=0; i < users.length; i++) {
-    database.selectTweets(users[i].screen_name, function(){
+    database.selectTweets(users[i].screen_name, function(tweets){
       // insert user into couchdb
-      console.log('Statuses migrated');
-      process.exit();
+      // TODO insert users[i] + tweets
     });
   }
 });
