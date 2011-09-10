@@ -14,23 +14,11 @@ database.findUsers( function(users) {
   for (var i=0; i < users.length; i++) {
     database.selectTweets(users[i].screen_name, function(x,tweets){
       console.log(x);
+      // insert user into couchdb
+      // TODO insert users[x] + tweets
+      // x - id usera 
+      // tweets - tablica twittow
     }.bind(null,i));
   }
-  
-  var max = users.length;
-  //getTweets(database, users, i, max);
 });
-
-function getTweets(database, users, i, max) {
-    console.log(i);
-    database.selectTweets(users[i].screen_name, function(tweets){
-      // insert user into couchdb
-      // TODO insert users[i] + tweets
-      if (i < max) 
-        getTweets(database, users, ++i, max);
-      else
-        console.log('Statuses migrated');
-    });
-  
-}
 

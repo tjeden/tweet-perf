@@ -211,3 +211,43 @@ Database.prototype.selectTimeline = function (username, callback) {
 	}
 
 };
+
+Database.prototype.findFollowers = function (username, callback) {
+
+	var counter = 0;
+	var followers_size = 0;
+
+	var counter = 0;
+	var full_followers = [];
+
+	var joinFollowers = function(followers) {
+		
+		full_followers = full_followers.concat(followers);
+
+		counter++;
+		if (counter == 4) {
+			callback (full_followers);
+		}
+	}
+	
+	for (i = 0; i < 4; i++) {
+
+			clients[i].query(
+			'SELECT * FROM ' + FOLLOWERS + ' f INNER JOIN ' + USERS + ' u ON f.follower_id = u.id WHERE screen_name LIKE ?',
+			[username],
+			function(err, results, fields) {
+
+					var temp_followers = [];
+
+					for (j = 0; j < results.length; j++) {
+							temp_followers.push(results[j].user_id);
+					}
+
+					joinFollowers(temp_followers);
+	
+				}
+			);
+
+	}
+
+};
