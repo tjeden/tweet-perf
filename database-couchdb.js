@@ -13,29 +13,21 @@ db.exists(function (err, exists) {
 	}
 });
 
-var users = [
-	{
-		user_id: {},
-		screen_name: {},
-		statuses: {},
-		followers: {},
-		created_at: {},
-		updated_at: {}
-	},
-	{
-		user_id: {},
-		screen_name: {},
-		statuses: {},
-		followers: {},
-		created_at: {},
-		updated_at: {}
-	}
-];
+function Database() {
+};
+exports.Database = Database;
 
-db.save(users, function(err, res){
-	if(!err){
-		console.log('users saved');
-	} else {
-		console.log('error', err);
-	}
-});
+Database.prototype.selectTweets = function (username, callback) {
+  // TODO
+  callback(['dupa']);
+}
+
+Database.prototype.insertTweet = function (username, status, callback) {
+  // TODO
+  callback(['dupa']);
+}
+
+Database.prototype.selectTimeline = function (username, callback) {
+  // TODO
+  callback(['dupa']);
+}
