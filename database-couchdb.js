@@ -25,9 +25,7 @@ function Database() {
 exports.Database = Database;
 
 Database.prototype.selectTweets = function (username, callback) {
-  // TODO
   db.view('user/byUsername', { key: username }, function (err, doc) {
-    //console.log(doc[0].value.statuses);
     callback(doc[0].value.statuses);
   }); 
 }
