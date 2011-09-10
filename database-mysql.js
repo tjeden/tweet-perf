@@ -6,20 +6,21 @@ var fs = require('fs');
 var path = require('path');
 
 var config = {};
+var clients = [];
+
+	
+var USERS = 'users';
+var STATUSES = 'statuses';
+var FOLLOWERS = 'followers';
+var LIMIT = 20;
 
 fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
 	if (err) {
    		console.log("could not load config.json\n" + err.toString());
   	} else {
 		config = JSON.parse(data);
-		console.log(config);
 	}
 
-
-	var USERS = 'users';
-	var STATUSES = 'statuses';
-	var FOLLOWERS = 'followers';
-	var LIMIT = 20;
 	
 	 /*
 	 * Database schema:
@@ -34,7 +35,6 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
 	var DATABASE2 = 'twitter3';
 	var DATABASE3 = 'twitter4';
 	
-	var clients = [];
 	clients.push(new MySQLPool({
 	  poolSize: 20,
 		user: config.user,
