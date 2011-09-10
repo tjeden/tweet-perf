@@ -122,7 +122,7 @@ Database.prototype.findUsers = function (callback) {
 		}
 	}
 
-	for (i = 0; i < 4; i++) {
+	for (var i = 0; i < 4; i++) {
 
 			clients[i].query(
 			'SELECT * FROM ' + USERS,

@@ -5,11 +5,16 @@ console.log('Start migrate users');
 
 var users = [];
 
-database.findUsers( function(results) {
-  users = results;
+database.findUsers( function(users) {
+
+  console.log('Users migrated. users.lenth:' + users.length);
+  console.log('Start migrate statuses');
+
+  for (var i=0; i < users.length; i++) {
+    database.selectTweets(users[i].screen_name, function(){
+      // insert user into couchdb
+      console.log('Statuses migrated');
+      process.exit();
+    });
+  }
 });
-
-console.log('Users migrated');
-
-console.log('Start migrate statuses');
-console.log('Statuses migrated');
