@@ -27,14 +27,19 @@ exports.Database = Database;
 Database.prototype.selectTweets = function (username, callback) {
   // TODO
   db.view('user/byUsername', { key: username }, function (err, doc) {
-    //console.log(doc[0].value.statuses);
     callback(doc[0].value.statuses);
   }); 
 }
 
 Database.prototype.insertTweet = function (username, status, callback) {
-  // TODO
-  callback(['dupa']);
+  db.view('user/byUsername', { key: username }, function (err, doc) {
+  	var now = new Date();
+  	doc[0].value.statuses.push({id: doc[0].value.id, name: doc[0].value.name, screen_name: doc[0].value.screen_name, text: status, created_at: now});
+  	db.save(doc[0].value.id + '', doc[0].value, function(err, res) {
+  		//console.log(res);
+  		callback ({'created_at': now, 'id': doc[0].value.statuses.length - 1});
+  	});
+  });
 }
 
 Database.prototype.selectTimeline = function (username, callback) {
