@@ -69,6 +69,6 @@ var dateSorter = function (a, b) {
 
   console.log(a);
   console.log(b);
-	return a.created_at.getTime() < b.created_at.getTime() ? true : false;
+	return Date.parse(a.created_at) < Date.parse(b.created_at) ? true : false;
 
 };
