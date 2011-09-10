@@ -1,0 +1,9 @@
+{ 
+  "name" : "tweet-perf",
+  "version" : "0.0.1",
+  "dependencies" : {
+    "restify" : "0.4.3",
+    "mysql-pool" : "0.2.2",
+    "cradle" : "0.5.5"
+  }
+}

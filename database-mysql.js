@@ -2,8 +2,6 @@
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
 var MySQLPool = require("mysql-pool").MySQLPool;
-var fs = require('fs');
-var path = require('path');
 var config = require('./config');
 
 var clients = [];
