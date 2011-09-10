@@ -4,8 +4,8 @@
 var MySQLPool = require("mysql-pool").MySQLPool;
 var fs = require('fs');
 var path = require('path');
+var config = require('./config');
 
-var config = {};
 var clients = [];
 
 	
@@ -14,14 +14,7 @@ var STATUSES = 'statuses';
 var FOLLOWERS = 'followers';
 var LIMIT = 20;
 
-fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
-	if (err) {
-   		console.log("could not load config.json\n" + err.toString());
-  	} else {
-		config = JSON.parse(data);
-	}
 
-	
 	 /*
 	 * Database schema:
 	 * users: id, name, screen_name
@@ -70,197 +63,195 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
 		port: config.port,
 		database: DATABASE3
 	}));
-});
 
-//------------------------------------------------------------------------------
+  //------------------------------------------------------------------------------
 
-function Database() {
-};
+  function Database() {
+  };
+  exports.Database = Database;
 
-exports.Database = Database;
+  Database.prototype.selectTweets = function (username, callback) {
 
-Database.prototype.selectTweets = function (username, callback) {
+    var counter = 0;
+    var full_results = [];
 
-	var counter = 0;
-	var full_results = [];
+    var joinTweets = function(results) {
+      
+      full_results = full_results.concat(results);
 
-	var joinTweets = function(results) {
-		
-		full_results = full_results.concat(results);
+      counter++;
+      if (counter == 4) {
+        callback (full_results);
+      }
+    }
 
-		counter++;
-		if (counter == 4) {
-			callback (full_results);
-		}
-	}
+    for (i = 0; i < 4; i++) {
 
-	for (i = 0; i < 4; i++) {
+        clients[i].query(
+        'SELECT * FROM ' + STATUSES + ' s INNER JOIN ' + USERS + ' u ON s.user_id = u.id WHERE screen_name LIKE ? ORDER BY s.created_at LIMIT ' + LIMIT,
+        [username],
+        function(err, results, fields) {
 
-			clients[i].query(
-			'SELECT * FROM ' + STATUSES + ' s INNER JOIN ' + USERS + ' u ON s.user_id = u.id WHERE screen_name LIKE ? ORDER BY s.created_at LIMIT ' + LIMIT,
-			[username],
-			function(err, results, fields) {
+            joinTweets(results);
+    
+          }
+        );
+    }
+  }
 
-					joinTweets(results);
-	
-				}
-			);
-	}
-}
+  Database.prototype.insertTweet = function (username, status, callback) {
+    
+    var now = new Date();
 
-Database.prototype.insertTweet = function (username, status, callback) {
-	
-	var now = new Date();
+    clients[0].query(
+      'INSERT INTO ' + STATUSES + ' SET id = ?, user_id = ?, text = ?, created_at = ?',
+      [now.toString(), username, status, now],
+    function(err, result) {
+    
+      callback ({'created_at': now.toString(), 'id': result.insertId});
+    
+    });
 
-	clients[0].query(
-		'INSERT INTO ' + STATUSES + ' SET id = ?, user_id = ?, text = ?, created_at = ?',
-		[now.toString(), username, status, now],
-	function(err, result) {
-	
-		callback ({'created_at': now.toString(), 'id': result.insertId});
-	
-	});
+  };
 
-};
+  Database.prototype.findUsers = function (callback) {
+    
+    var counter = 0;
+    var full_results = [];
 
-Database.prototype.findUsers = function (callback) {
-	
-	var counter = 0;
-	var full_results = [];
+    var joinUsers = function(results) {
+      
+      full_results = full_results.concat(results);
 
-	var joinUsers = function(results) {
-		
-		full_results = full_results.concat(results);
+      counter++;
 
-		counter++;
+      if (counter >= 4) {
+        callback (full_results);
+      }
+    }
 
-		if (counter >= 4) {
-			callback (full_results);
-		}
-	}
+    for (var i = 0; i < 4; i++) {
 
-	for (var i = 0; i < 4; i++) {
+        clients[i].query(
+        'SELECT * FROM ' + USERS,
+        function(err, results, fields) {
+            joinUsers(results);
+          }
+        );
+    }
 
-			clients[i].query(
-			'SELECT * FROM ' + USERS,
-			function(err, results, fields) {
-					joinUsers(results);
-				}
-			);
-	}
+  };
 
-};
+  Database.prototype.selectTimeline = function (username, callback) {
 
-Database.prototype.selectTimeline = function (username, callback) {
+    var counter = 0;
+    var followers_size = 0;
+    var full_results = [];
 
-	var counter = 0;
-	var followers_size = 0;
-	var full_results = [];
+    var joinTweets = function(results) {
+      
+      full_results = full_results.concat(results);
 
-	var joinTweets = function(results) {
-		
-		full_results = full_results.concat(results);
-
-		counter++;
+      counter++;
 
 
-		if (counter >= 4*followers_size) {
-			callback (full_results);
-		}
-	}
+      if (counter >= 4*followers_size) {
+        callback (full_results);
+      }
+    }
 
 
-	var counter = 0;
-	var full_followers = [];
+    var counter = 0;
+    var full_followers = [];
 
-	var joinFollowers = function(followers) {
-		
-		full_followers = full_followers.concat(followers);
+    var joinFollowers = function(followers) {
+      
+      full_followers = full_followers.concat(followers);
 
-		counter++;
-		if (counter == 4) {
-	
-			followers_size = full_followers.length;
+      counter++;
+      if (counter == 4) {
+    
+        followers_size = full_followers.length;
 
-			for (k = 0; k < followers_size; k++) {
+        for (k = 0; k < followers_size; k++) {
 
-					for (l = 0; l < 4; l++) {
+            for (l = 0; l < 4; l++) {
 
-							clients[l].query(
-							'SELECT * FROM ' + STATUSES + ' WHERE user_id = ? ORDER BY created_at LIMIT ' + LIMIT,
-							[full_followers[k]],
-							function(err, results, fields) {
-							
-									joinTweets(results);
-	
-								}
-							);
+                clients[l].query(
+                'SELECT * FROM ' + STATUSES + ' WHERE user_id = ? ORDER BY created_at LIMIT ' + LIMIT,
+                [full_followers[k]],
+                function(err, results, fields) {
+                
+                    joinTweets(results);
+    
+                  }
+                );
 
-					}
+            }
 
-			}
+        }
 
-		}
-	}
-	
-	for (i = 0; i < 4; i++) {
+      }
+    }
+    
+    for (i = 0; i < 4; i++) {
 
-			clients[i].query(
-			'SELECT * FROM ' + FOLLOWERS + ' f INNER JOIN ' + USERS + ' u ON f.follower_id = u.id WHERE screen_name LIKE ?',
-			[username],
-			function(err, results, fields) {
+        clients[i].query(
+        'SELECT * FROM ' + FOLLOWERS + ' f INNER JOIN ' + USERS + ' u ON f.follower_id = u.id WHERE screen_name LIKE ?',
+        [username],
+        function(err, results, fields) {
 
-					var temp_followers = [];
+            var temp_followers = [];
 
-					for (j = 0; j < results.length; j++) {
-							temp_followers.push(results[j].user_id);
-					}
+            for (j = 0; j < results.length; j++) {
+                temp_followers.push(results[j].user_id);
+            }
 
-					joinFollowers(temp_followers);
-	
-				}
-			);
+            joinFollowers(temp_followers);
+    
+          }
+        );
 
-	}
+    }
 
-};
+  };
 
-Database.prototype.findFollowers = function (username, callback) {
+  Database.prototype.findFollowers = function (username, callback) {
 
-	var counter = 0;
-	var followers_size = 0;
+    var counter = 0;
+    var followers_size = 0;
 
-	var counter = 0;
-	var full_followers = [];
+    var counter = 0;
+    var full_followers = [];
 
-	var joinFollowers = function(followers) {
-		
-		full_followers = full_followers.concat(followers);
+    var joinFollowers = function(followers) {
+      
+      full_followers = full_followers.concat(followers);
 
-		counter++;
-		if (counter == 4) {
-			callback (full_followers);
-		}
-	}
-	
-	for (i = 0; i < 4; i++) {
+      counter++;
+      if (counter == 4) {
+        callback (full_followers);
+      }
+    }
+    
+    for (i = 0; i < 4; i++) {
 
-			clients[i].query(
-			'SELECT * FROM ' + FOLLOWERS + ' f INNER JOIN ' + USERS + ' u ON f.follower_id = u.id WHERE screen_name LIKE ?',
-			[username],
-			function(err, results, fields) {
+        clients[i].query(
+        'SELECT * FROM ' + FOLLOWERS + ' f INNER JOIN ' + USERS + ' u ON f.follower_id = u.id WHERE screen_name LIKE ?',
+        [username],
+        function(err, results, fields) {
 
-					var temp_followers = [];
+            var temp_followers = [];
 
-					for (j = 0; j < results.length; j++) {
-							temp_followers.push(results[j].user_id);
-					}
+            for (j = 0; j < results.length; j++) {
+                temp_followers.push(results[j].user_id);
+            }
 
-					joinFollowers(temp_followers);
-	
-				}
-			);
+            joinFollowers(temp_followers);
+    
+          }
+        );
 
-	}
+    }
 
-};
+  };
