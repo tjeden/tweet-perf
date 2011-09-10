@@ -26,15 +26,9 @@ database.findUsers( function(users) {
 
   for (var i=0; i < users.length; i++) {
     database.selectTweets(users[i].screen_name, function(x,tweets){
-      
-      console.log(tweets);
       data[x].statuses = tweets;
       db.save(data[x]);
       console.log(x);
-      // insert user into couchdb
-      // TODO insert users[x] + tweets
-      // x - id usera 
-      // tweets - tablica twittow
     }.bind(null,i));
   }
   
