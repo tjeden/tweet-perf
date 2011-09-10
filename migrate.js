@@ -3,7 +3,7 @@ var database = new database_module.Database();
 
 var cradle = require('cradle');
 var db = new(cradle.Connection)().database('tweet-couchdb');
-
+db.create();
 db.exists(function (err, exists) {
 	if (err) {
 	  console.log('error', err);
@@ -11,8 +11,8 @@ db.exists(function (err, exists) {
 	  console.log('the force is with you.');
 	} else {
 	  console.log('database does not exists.');
+	  db.create();
 	}
-});
 
 console.log('Start migrate users');
 
@@ -27,9 +27,8 @@ database.findUsers( function(users) {
   for (var i=0; i < users.length; i++) {
     database.selectTweets(users[i].screen_name, function(x,tweets){
       
-      console.log(tweets);
       data[x].statuses = tweets;
-      db.save(data[x]);
+      db.save(data[x].id+'', data[x]);
       console.log(x);
       // insert user into couchdb
       // TODO insert users[x] + tweets
@@ -41,3 +40,5 @@ database.findUsers( function(users) {
  
 });
 
+
+});
