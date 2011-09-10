@@ -1,7 +1,6 @@
 /*
  * Database module based on 'mysql' https://github.com/felixge/node-mysql
  */
-console.log('aa'); 
 var mysql = require('mysql');
 
 var USERS = 'users';
@@ -25,32 +24,32 @@ var DATABASE3 = 'twitter4';
 var clients = [];
 
 clients.push(mysql.createClient({
-	user: 'devcamp',
-	password: 'devcamp',
+	user: 'root',
+	password: '',
 	host: 'localhost',
 	port: 3306,
 	database: DATABASE0,
 }));
 
 clients.push(mysql.createClient({
-	user: 'devcamp',
-	password: 'devcamp',
+	user: 'root',
+	password: '',
 	host: 'localhost',
 	port: 3306,
 	database: DATABASE1,
 }));
 
 clients.push(mysql.createClient({
-	user: 'devcamp',
-	password: 'devcamp',
+	user: 'root',
+	password: '',
 	host: 'localhost',
 	port: 3306,
 	database: DATABASE2,
 }));
 
 clients.push(mysql.createClient({
-	user: 'devcamp',
-	password: 'devcamp',
+	user: 'root',
+	password: '',
 	host: 'localhost',
 	port: 3306,
 	database: DATABASE3,
@@ -104,6 +103,34 @@ Database.prototype.insertTweet = function (username, status, callback) {
 		callback ({'created_at': now.toString(), 'id': result.insertId});
 	
 	});
+
+};
+
+Database.prototype.findUsers = function (callback) {
+	
+	var counter = 0;
+	var full_results = [];
+
+	var joinUsers = function(results) {
+		
+		full_results = full_results.concat(results);
+
+		counter++;
+
+		if (counter >= 4) {
+			callback (full_results);
+		}
+	}
+
+	for (i = 0; i < 4; i++) {
+
+			clients[i].query(
+			'SELECT * FROM ' + USERS,
+			function(err, results, fields) {
+					joinUsers(results);
+				}
+			);
+	}
 
 };
 

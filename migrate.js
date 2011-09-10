@@ -1,10 +1,15 @@
-require('./database-mysql.js');
-console.log('bb');
+var database_module = require('./database-mysql.js');
+var database = new database_module.Database();
 
-for (i = 0; i < 4; i++) {
-  clients[i].query(
-  'SELECT * FROM ' + USERS,
-  function(err, results, fields) {
-      console.log(results);
-  });
-}
+console.log('Start migrate users');
+
+var users = [];
+
+database.findUsers( function(results) {
+  users = results;
+});
+
+console.log('Users migrated');
+
+console.log('Start migrate statuses');
+console.log('Statuses migrated');
