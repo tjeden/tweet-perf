@@ -8,7 +8,7 @@ var limit = 0;
 
 database.findUsers( function(users) {
 
-  console.log('Users migrated. users.lenth:' + users.length);
+  console.log('Users migrated. users.length:' + users.length);
   console.log('Start migrate statuses');
 
   for (var i=0; i < users.length; i++) {
