@@ -10,7 +10,7 @@ db.exists(function (err, exists) {
     db.save('_design/user', {
       views: {
         byUsername: {
-          map: 'function (doc) { if (doc.resource === `User`) { emit(doc.screen_name, doc) } }'
+          map: 'function (doc) { emit(doc.screen_name, doc); }'
         }
       }
     });
@@ -27,7 +27,8 @@ exports.Database = Database;
 Database.prototype.selectTweets = function (username, callback) {
   // TODO
   db.view('user/byUsername', { key: username }, function (err, doc) {
-    callback(doc);
+    //console.log(doc[0].value.statuses);
+    callback(doc[0].value.statuses);
   }); 
 }
 

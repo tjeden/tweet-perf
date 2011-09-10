@@ -67,6 +67,8 @@ Engine.prototype.getTimeline = function (username, callback) {
 // we're passing it to sort() method
 var dateSorter = function (a, b) {
 
+  console.log(a);
+  console.log(b);
 	return a.created_at.getTime() < b.created_at.getTime() ? true : false;
 
 };
